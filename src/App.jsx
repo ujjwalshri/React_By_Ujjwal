@@ -1,83 +1,72 @@
-import { useState } from 'react'
-import {InputBox} from './components'
-import useCurrencyInfo from './hooks/useCurrencyInfo'
-
+import { useState, useEffect } from 'react'
+import {TodoProvider} from './contexts'
+import './App.css'
+import TodoForm from './components/TodoForm'
+import TodoItem from './components/TodoItem'
 
 function App() {
+  const [todos, setTodos] = useState([])
 
-  const [amount, setAmount] = useState(0)
-  const [from, setFrom] = useState("usd")
-  const [to, setTo] = useState("inr")
-  const [convertedAmount, setConvertedAmount] = useState(0)
-
-  const currencyInfo = useCurrencyInfo(from)
-
-  const options = Object.keys(currencyInfo)
-
-  const swap = () => {
-    setFrom(to)
-    setTo(from)
-    setConvertedAmount(amount)
-    setAmount(convertedAmount)
+  const addTodo = (todo) => {
+    setTodos((prev) => [{id: Date.now(), ...todo}, ...prev] )
   }
+
+  const updateTodo = (id, todo) => {
+    setTodos((prev) => prev.map((prevTodo) => (prevTodo.id === id ? todo : prevTodo )))
+
+    
+  }
+
+  const deleteTodo = (id) => {
+    setTodos((prev) => prev.filter((todo) => todo.id !== id))
+  }
+
+  const toggleComplete = (id) => {
+    //console.log(id);
+    setTodos((prev) => 
+    prev.map((prevTodo) => 
+      prevTodo.id === id ? { ...prevTodo, 
+        completed: !prevTodo.completed } : prevTodo))
+  }
+
+  useEffect(() => {
+    const todos = JSON.parse(localStorage.getItem("todos"))
+
+    if (todos && todos.length > 0) {
+      setTodos(todos)
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos))
+  }, [todos])
   
-  const convert = () => {
-    setConvertedAmount(amount * currencyInfo[to])
-  }
+
+
 
   return (
-    <div
-        className="w-full h-screen flex flex-wrap justify-center items-center bg-cover bg-no-repeat"
-        style={{
-            backgroundImage: `url('https://images.pexels.com/photos/534216/pexels-photo-534216.jpeg?auto=compress&cs=tinysrgb&w=600')`,
-        }}
-    >
-        <div className="w-full  ">
-            <div className="w-full max-w-md mx-auto border border-gray-60 rounded-lg p-5 backdrop-blur-sm bg-white/30 font-mono">
-                <form
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        convert()
-                       
-                    }}
-                >
-                    <div className="w-full mb-1">
-                        <InputBox
-                          label="From"
-                          amount={amount}
-                          currencyOptions={options}
-                          onCurrencyChange={(currency) => setFrom(currency)}
-                          selectCurrency={from}
-                          onAmountChange={(amount) => setAmount(amount)}
-                        />
+    <TodoProvider value={{todos, addTodo, updateTodo, deleteTodo, toggleComplete}}>
+      <div className="bg-[#2e180a] min-h-screen py-8">
+                <div className="w-full max-w-2xl mx-auto shadow-md rounded-lg px-4 py-3 text-white">
+                    <h1 className="text-2xl font-bold text-center mb-8 mt-2 font-mono">Manage Your Todos</h1>
+                    <div className="mb-4">
+                        {/* Todo form goes here */} 
+                        <TodoForm />
                     </div>
-                    <div className="relative w-full h-0.5">
-                        <button
-                            type="button"
-                            className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-white rounded-md bg-green-700 active:bg-green-900 font-mono text-white px-2 py-0.5"
-                            onClick={swap}
-                        >
-                            swap
-                        </button>
+                    <div className="flex flex-wrap gap-y-3">
+                        {/*Loop and Add TodoItem here */}
+                        {todos.map((todo) => (
+                          <div key={todo.id}
+                          className='w-full'
+                          >
+                            <TodoItem todo={todo} />
+                          </div>
+                        ))}
                     </div>
-                    <div className="w-full mt-1 mb-4">
-                        <InputBox
-                           label="To"
-                           amount={convertedAmount}
-                           currencyOptions={options}
-                           onCurrencyChange={(currency) => setTo(currency)}
-                           selectCurrency={to} 
-                           amountDisable
-                        />
-                    </div>
-                    <button type="submit" className="w-full bg-green-700 text-white px-4 py-3 rounded-lg font-mono active:bg-green-900">
-                        Convert {from.toUpperCase()} to {to.toUpperCase()}
-                    </button>
-                </form>
+                </div>
             </div>
-        </div>
-    </div>
-);
+    </TodoProvider>
+  )
 }
 
 export default App
