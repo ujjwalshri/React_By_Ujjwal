@@ -1,72 +1,80 @@
-import { useState, useEffect } from 'react'
-import {TodoProvider} from './contexts'
-import './App.css'
-import TodoForm from './components/TodoForm'
-import TodoItem from './components/TodoItem'
+import { useState } from 'react';
 
 function App() {
-  const [todos, setTodos] = useState([])
-
-  const addTodo = (todo) => {
-    setTodos((prev) => [{id: Date.now(), ...todo}, ...prev] )
-  }
-
-  const updateTodo = (id, todo) => {
-    setTodos((prev) => prev.map((prevTodo) => (prevTodo.id === id ? todo : prevTodo )))
-
-    
-  }
-
-  const deleteTodo = (id) => {
-    setTodos((prev) => prev.filter((todo) => todo.id !== id))
-  }
-
-  const toggleComplete = (id) => {
-    //console.log(id);
-    setTodos((prev) => 
-    prev.map((prevTodo) => 
-      prevTodo.id === id ? { ...prevTodo, 
-        completed: !prevTodo.completed } : prevTodo))
-  }
-
-  useEffect(() => {
-    const todos = JSON.parse(localStorage.getItem("todos"))
-
-    if (todos && todos.length > 0) {
-      setTodos(todos)
-    }
-  }, [])
-
-  useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos))
-  }, [todos])
-  
-
-
+  const [color, setcolor] = useState('gray');
 
   return (
-    <TodoProvider value={{todos, addTodo, updateTodo, deleteTodo, toggleComplete}}>
-      <div className="bg-[#2e180a] min-h-screen py-8">
-                <div className="w-full max-w-2xl mx-auto shadow-md rounded-lg px-4 py-3 text-white">
-                    <h1 className="text-2xl font-bold text-center mb-8 mt-2 font-mono">Manage Your Todos</h1>
-                    <div className="mb-4">
-                        {/* Todo form goes here */} 
-                        <TodoForm />
-                    </div>
-                    <div className="flex flex-wrap gap-y-3">
-                        {/*Loop and Add TodoItem here */}
-                        {todos.map((todo) => (
-                          <div key={todo.id}
-                          className='w-full'
-                          >
-                            <TodoItem todo={todo} />
-                          </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-    </TodoProvider>
-  )
+    <>
+      <div className='w-full h-screen duration-200 flex flex-wrap justify-center'
+      style={{backgroundColor: color}}
+      >
+      <div className='flex flex-wrap justify-center h-12 w-3/4 bg-black mt-2 rounded-xl shadow-xl'>
+        <div className='flex flex-wrap p-1'>
+          <button
+            className='rounded-3xl m-1  shadow-lg text-xs cursor-pointer bg-red-500 h-8 w-10 p-1'
+            onClick={() => setcolor('red')}
+          >
+                    </button>
+          <button
+            className='rounded-3xl m-1  shadow-lg text-xs cursor-pointer bg-gray-500 h-8 w-10 p-1'
+            onClick={() => setcolor('gray')}
+          >
+                     </button>
+          <button
+            className='rounded-3xl m-1  shadow-lg text-xs cursor-pointer bg-blue-300 h-8 w-10 p-1'
+            onClick={() => setcolor('aqua')}
+          >
+                     </button>
+          <button
+            className='rounded-3xl m-1  shadow-lg text-xs cursor-pointer bg-lime-500 h-8 w-10 p-1'
+            onClick={() => setcolor('lime')}
+          >
+                     </button>
+          <button
+            className='rounded-3xl m-1  shadow-lg text-xs cursor-pointer bg-orange-500 h-8 w-10 p-1'
+            onClick={() => setcolor('orange')}
+          >
+            
+          </button>
+          <button
+            className='rounded-3xl m-1  shadow-lg text-xs cursor-pointer bg-teal-500 h-8 w-10 p-1'
+            onClick={() => setcolor('teal')}
+          >
+                    </button>
+          <button
+            className='rounded-3xl m-1  shadow-lg text-xs cursor-pointer bg-white h-8 w-10 p-1'
+            onClick={() => setcolor('white')}
+          >
+                    </button>
+          <button
+            className='rounded-3xl m-1  shadow-lg text-xs cursor-pointer bg-blue-500 h-8 w-10 p-1'
+            onClick={() => setcolor('blue')}
+          >
+                     </button>
+          <button
+            className='rounded-3xl m-1  shadow-lg text-xs cursor-pointer bg-green-500 h-8 w-10 p-1'
+            onClick={() => setcolor('green')}
+          >
+                      </button>
+          <button
+            className='rounded-3xl m-1  shadow-lg text-xs cursor-pointer bg-yellow-500 h-8 w-10 p-1'
+            onClick={() => setcolor('yellow')}
+          >
+            
+          </button>
+          <button
+            className='rounded-3xl m-1  shadow-lg text-xs cursor-pointer bg-pink-500 h-8 w-10 p-1'
+            onClick={() => setcolor('pink')}
+          >
+                     </button>
+        </div>
+      </div>
+      <div className='text-center fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-300 p-6 w-full'><h1>Color changer</h1></div>
+      </div>
+
+     
+    </>
+  );
 }
 
-export default App
+export default App;
